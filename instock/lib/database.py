@@ -11,11 +11,11 @@ from sqlalchemy import inspect
 __author__ = 'myh '
 __date__ = '2023/3/10 '
 
-db_host = "www.tangtuan.top"  # 数据库服务主机
+db_host = "ipv6.tangtuan.top"  # 数据库服务主机
 db_user = "root"  # 数据库访问用户
-db_password = "1qasde#@WW"  # 数据库访问密码
+db_password = "1qasde#2WW"  # 数据库访问密码
 db_database = "instockdb"  # 数据库名称
-db_port = 35016  # 数据库服务端口
+db_port = 5019  # 数据库服务端口
 db_charset = "utf8mb4"  # 数据库字符集
 
 # 使用环境变量获得数据库,docker -e 传递
