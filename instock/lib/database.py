@@ -12,28 +12,28 @@ __author__ = 'myh '
 __date__ = '2023/3/10 '
 
 db_host = "ipv6.tangtuan.top"  # 数据库服务主机
-db_user = "root"  # 数据库访问用户
+db_user = "instock_user"  # 数据库访问用户
 db_password = "1qasde#2WW"  # 数据库访问密码
 db_database = "instockdb"  # 数据库名称
 db_port = 5019  # 数据库服务端口
 db_charset = "utf8mb4"  # 数据库字符集
 
-# 使用环境变量获得数据库,docker -e 传递
-_db_host = os.environ.get('db_host')
-if _db_host is not None:
-    db_host = _db_host
-_db_user = os.environ.get('db_user')
-if _db_user is not None:
-    db_user = _db_user
-_db_password = os.environ.get('db_password')
-if _db_password is not None:
-    db_password = _db_password
-_db_database = os.environ.get('db_database')
-if _db_database is not None:
-    db_database = _db_database
-_db_port = os.environ.get('db_port')
-if _db_port is not None:
-    db_port = int(_db_port)
+# # 使用环境变量获得数据库,docker -e 传递
+# _db_host = os.environ.get('db_host')
+# if _db_host is not None:
+#     db_host = _db_host
+# _db_user = os.environ.get('db_user')
+# if _db_user is not None:
+#     db_user = _db_user
+# _db_password = os.environ.get('db_password')
+# if _db_password is not None:
+#     db_password = _db_password
+# _db_database = os.environ.get('db_database')
+# if _db_database is not None:
+#     db_database = _db_database
+# _db_port = os.environ.get('db_port')
+# if _db_port is not None:
+#     db_port = int(_db_port)
 
 MYSQL_CONN_URL = "mysql+pymysql://%s:%s@%s:%s/%s?charset=%s" % (
     db_user, db_password, db_host, db_port, db_database, db_charset)

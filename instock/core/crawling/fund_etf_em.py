@@ -318,43 +318,68 @@ def fund_etf_hist_min_em(
         ]
         return temp_df
 
+from datetime import datetime
 
 if __name__ == "__main__":
-    fund_etf_spot_em_df = fund_etf_spot_em()
-    print(fund_etf_spot_em_df)
 
-    fund_etf_hist_hfq_em_df = fund_etf_hist_em(
-        symbol="513500",
-        period="daily",
-        start_date="20000101",
-        end_date="20230201",
-        adjust="hfq",
-    )
-    print(fund_etf_hist_hfq_em_df)
+    # # 获取当前日期
+    # end_date = datetime.today().strftime('%Y%m%d')
+    # symbol="159915"
 
-    fund_etf_hist_qfq_em_df = fund_etf_hist_em(
-        symbol="513500",
-        period="daily",
-        start_date="20000101",
-        end_date="20230201",
-        adjust="qfq",
-    )
-    print(fund_etf_hist_qfq_em_df)
+    # # 获取ETF 159915的历史数据
+    # etf_data = fund_etf_hist_em(
+    #     symbol=symbol,
+    #     period="daily",
+    #     start_date="20000101",
+    #     end_date=end_date,
+    #     adjust="qfq",
+    # )
 
-    fund_etf_hist_em_df = fund_etf_hist_em(
-        symbol="513500",
-        period="daily",
-        start_date="20000101",
-        end_date="20230201",
-        adjust="",
-    )
-    print(fund_etf_hist_em_df)
+
+    # # 检查数据
+    # if etf_data is not None and not etf_data.empty:
+    #     # 构造文件名，包含 ETF 代码和结束日期
+    #     csv_file_path = f"{symbol}_etf_{end_date}.csv"
+    #     etf_data.to_csv(csv_file_path, index=False, encoding='utf-8-sig')
+    #     print(f"数据已成功保存到 {csv_file_path}")
+    # else:
+    #     print("未获取到有效数据")
+        
+    # fund_etf_spot_em_df = fund_etf_spot_em()
+    # print(fund_etf_spot_em_df)
+
+    # fund_etf_hist_hfq_em_df = fund_etf_hist_em(
+    #     symbol="513500",
+    #     period="daily",
+    #     start_date="20000101",
+    #     end_date="20230201",
+    #     adjust="hfq",
+    # )
+    # print(fund_etf_hist_hfq_em_df)
+
+    # fund_etf_hist_qfq_em_df = fund_etf_hist_em(
+    #     symbol="513500",
+    #     period="daily",
+    #     start_date="20000101",
+    #     end_date="20230201",
+    #     adjust="qfq",
+    # )
+    # print(fund_etf_hist_qfq_em_df)
+
+    # fund_etf_hist_em_df = fund_etf_hist_em(
+    #     symbol="513500",
+    #     period="daily",
+    #     start_date="20000101",
+    #     end_date="20230201",
+    #     adjust="",
+    # )
+    # print(fund_etf_hist_em_df)
 
     fund_etf_hist_min_em_df = fund_etf_hist_min_em(
         symbol="513500",
-        period="5",
-        adjust="hfq",
-        start_date="2023-01-01 09:32:00",
-        end_date="2023-01-04 14:40:00",
+        period="1",
+        adjust="qfq",
+        start_date="2024-01-01 09:32:00",
+        end_date="2024-01-04 14:40:00",
     )
     print(fund_etf_hist_min_em_df)

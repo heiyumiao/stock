@@ -49,6 +49,6 @@ jobs:
       run: |
         python -m unittest discover
 
-    - name: Run application
-      run: |
-        python your_script.py
+    # - name: Run application
+    #   run: |
+    #     python your_script.py
