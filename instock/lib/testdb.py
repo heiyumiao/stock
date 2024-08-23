@@ -7,9 +7,9 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'  # 定义日志格式
 )
 
-db_host = "ipv6.tangtuan.top"  # 数据库服务主机
+db_host = "v6.tangtuan.top"  # 数据库服务主机
 db_user = "instock_user"  # 数据库访问用户
-db_password = "1qasde#2WW"  # 数据库访问密码
+db_password = "1qasde_2WW"  # 数据库访问密码
 db_database = "instockdb"  # 数据库名称
 db_port = 5019  # 数据库服务端口
 db_charset = "utf8mb4"  # 数据库字符集

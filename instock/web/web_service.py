@@ -83,6 +83,8 @@ def main():
     tornado.ioloop.IOLoop.current().time_func = lambda: time.time() + 0.5
     tornado.ioloop.IOLoop.current().start()
 
+# sed -i '/tornado.ioloop.IOLoop.current().start()/i\ \ \ \ tornado.ioloop.IOLoop.current().time_func = lambda: time.time() + 0.5' web_service.py
+
 
 if __name__ == "__main__":
     main()

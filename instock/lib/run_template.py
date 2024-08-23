@@ -56,3 +56,7 @@ def run_with_args(run_fun, *args):
                 run_fun(run_date_nph, *args)
         except Exception as e:
             logging.error(f"run_template.run_with_args处理异常：{run_fun}{sys.argv}{e}")
+
+
+
+# https://gyssi.link/iptv/chinaiptv/%E6%B5%99%E6%B1%9F%E7%9C%81.m3u?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjY3NTk4ODc4NDksImlhdCI6MTcyMjU4NzczMywiZXhwIjoxNzI1MTc5NzMzfQ.NVDeBoM-nyuBu5RtSyTi8sYZLreWP1lF1XotKWgGIrU

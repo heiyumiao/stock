@@ -3,6 +3,11 @@
 
 import pandas as pd
 import requests
+
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
+# print(sys.path) 
 import instock.core.tablestructure as tbs
 
 __author__ = 'myh '
@@ -76,4 +81,4 @@ def stock_selection_params():
 
 if __name__ == "__main__":
     stock_selection_df = stock_selection()
-    print(stock_selection)
+    print(stock_selection_df)

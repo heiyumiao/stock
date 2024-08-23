@@ -345,8 +345,9 @@ if __name__ == "__main__":
     # else:
     #     print("未获取到有效数据")
         
-    # fund_etf_spot_em_df = fund_etf_spot_em()
-    # print(fund_etf_spot_em_df)
+    fund_etf_spot_em_df = fund_etf_spot_em()
+    print(fund_etf_spot_em_df)
+    fund_etf_spot_em_df.to_csv("fund_etf_spot_em_df.csv", index=False)
 
     # fund_etf_hist_hfq_em_df = fund_etf_hist_em(
     #     symbol="513500",
@@ -375,11 +376,14 @@ if __name__ == "__main__":
     # )
     # print(fund_etf_hist_em_df)
 
-    fund_etf_hist_min_em_df = fund_etf_hist_min_em(
-        symbol="513500",
-        period="1",
-        adjust="qfq",
-        start_date="2024-01-01 09:32:00",
-        end_date="2024-01-04 14:40:00",
-    )
-    print(fund_etf_hist_min_em_df)
+# # 只有一周的数据
+#     fund_etf_hist_min_em_df = fund_etf_hist_min_em(
+#         symbol="513500",
+#         period="1",
+#         adjust="qfq",
+#         start_date="2024-08-12 09:29:00",
+#         end_date="2024-08-16 15:30:00",
+#     )
+#     print(fund_etf_hist_min_em_df)
+#     fund_etf_hist_min_em_df.to_csv("fund_etf_hist_min_em_df.csv", index=False)
+
