@@ -10,14 +10,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    env:
-      DB_HOST: ipv6.tangtuan.top
-      DB_USER: instock_user
-      DB_PASSWORD: 1qasde#2WW
-      DB_DATABASE: instockdb
-      DB_PORT: 5019
-      DB_CHARSET: utf8mb4
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
