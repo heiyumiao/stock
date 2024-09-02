@@ -266,6 +266,16 @@ CN_STOCK_HIST_DATA = {'name': 'fund_etf_hist_em', 'cn': '基金某时间段的�
                                   'ups_downs': {'type': FLOAT, 'cn': '涨跌额'},
                                   'turnover': {'type': FLOAT, 'cn': '换手率'}}}
 
+CN_STOCK_HIST_MIN_DATA = {'name': 'fund_etf_hist_min_em', 'cn': '基金某时间段的秒情数据库',
+                      'columns': {'date': {'type': DATE, 'cn': '时间'},
+                                  'open': {'type': FLOAT, 'cn': '开盘'},
+                                  'close': {'type': FLOAT, 'cn': '收盘'},
+                                  'high': {'type': FLOAT, 'cn': '最高'},
+                                  'low': {'type': FLOAT, 'cn': '最低'},
+                                  'volume': {'type': FLOAT, 'cn': '成交量'},
+                                  'amount': {'type': FLOAT, 'cn': '成交额'},
+                                  'new_price': {'type': FLOAT, 'cn': '最新价'}}}
+
 TABLE_CN_STOCK_FOREIGN_KEY = {'name': 'cn_stock_foreign_key', 'cn': '股票外键',
                               'columns': {'date': {'type': DATE, 'cn': '日期', 'size': 0},
                                           'code': {'type': NVARCHAR(6), 'cn': '代码', 'size': 60},

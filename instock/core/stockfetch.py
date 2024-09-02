@@ -316,10 +316,74 @@ def stock_hist_cache(code, date_start, date_end=None, is_cache=True, adjust=''):
             try:
                 if is_cache:
                     stock.to_pickle(cache_file, compression="gzip")
-            except Exception:
+            except Exception as e:
                 pass
             # time.sleep(1)
             return stock
     except Exception as e:
         logging.error(f"stockfetch.stock_hist_cache处理异常：{code}代码{e}")
+    return None
+
+
+
+
+
+
+
+
+# 读取股票历史数据# min
+def fetch_stock_hist_min(data_base, date_start=None, is_cache=True):
+    date = data_base[0]
+    code = data_base[1]
+
+    try:
+        data = stock_hist_min_cache(code, date_start, None, is_cache, 'qfq')
+        if data is not None:
+            data.loc[:, 'p_change'] = tl.ROC(data['close'].values, 1)
+            data['p_change'].values[np.isnan(data['p_change'].values)] = 0.0
+            data["volume"] = data['volume'].values.astype('double') * 100  # 成交量单位从手变成股。
+        return data
+    except Exception as e:
+        logging.error(f"stockfetch.fetch_stock_hist_min处理异常：{e}")
+    return None
+
+def stock_hist_min_cache(code, date_start, date_end=None, is_cache=True, adjust=''):
+    cache_dir = os.path.join(stock_hist_cache_path, date_start[0:6])
+    # 如果没有文件夹创建一个。月文件夹和日文件夹。方便删除。
+    try:
+        if not os.path.exists(cache_dir):
+            os.makedirs(cache_dir)
+    except Exception:
+        pass
+    cache_file = os.path.join(cache_dir, "%s%s.gzip.pickle" % (code, adjust))
+    # 如果缓存存在就直接返回缓存数据。压缩方式。
+    try:
+        if os.path.isfile(cache_file):
+            existing_data = pd.read_pickle(cache_file, compression="gzip")
+        else:
+            existing_data = pd.DataFrame()
+        
+        new_stock_data = she.stock_zh_a_hist_min_em(symbol=code, period="1",  adjust=adjust)
+
+        # If no new data or data is empty, return the existing data
+        if new_stock_data is None or new_stock_data.empty:
+            return existing_data if not existing_data.empty else None
+
+        # Set the correct column names
+        new_stock_data.columns = tuple(tbs.CN_STOCK_HIST_MIN_DATA['columns'])
+        new_stock_data = new_stock_data.sort_index()
+
+        # Append new data to the existing data, avoiding duplicates
+        if not existing_data.empty:
+            existing_data['date'] = pd.to_datetime(existing_data['date'])
+        combined_data = pd.concat([existing_data, new_stock_data], ignore_index=True).drop_duplicates()
+
+        # Save the combined data back to the cache file
+        combined_data.to_pickle(cache_file, compression="gzip")
+
+        # Return the combined data
+        return combined_data
+    
+    except Exception as e:
+        logging.error(f"stockfetch.stock_hist_min_cache处理异常：{code}代码{e}")
     return None

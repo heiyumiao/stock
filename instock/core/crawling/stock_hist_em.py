@@ -346,7 +346,7 @@ def stock_zh_a_hist_min_em(
             "fields1": "f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13",
             "fields2": "f51,f52,f53,f54,f55,f56,f57,f58",
             "ut": "7eea3edcaed734bea9cbfc24409ed989",
-            "ndays": "5",
+            "ndays": "1",
             "iscr": "0",
             "secid": f"{code_id_dict[symbol]}.{symbol}",
             "_": "1623766962675",
@@ -503,33 +503,35 @@ def stock_zh_a_hist_pre_min_em(
 
 
 if __name__ == "__main__":
-    stock_zh_a_spot_em_df = stock_zh_a_spot_em()
-    print(stock_zh_a_spot_em_df)
+    # stock_zh_a_spot_em_df = stock_zh_a_spot_em()
+    # print(stock_zh_a_spot_em_df)
 
-    code_id_map_em_df = code_id_map_em()
-    print(code_id_map_em_df)
+    # code_id_map_em_df = code_id_map_em()
+    # print(code_id_map_em_df)
 
-    stock_zh_a_hist_df = stock_zh_a_hist(
-        symbol="430090",
-        period="daily",
-        start_date="20220516",
-        end_date="20220722",
-        adjust="hfq",
-    )
-    print(stock_zh_a_hist_df)
+    # stock_zh_a_hist_df = stock_zh_a_hist(
+    #     symbol="430090",
+    #     period="daily",
+    #     start_date="20220516",
+    #     end_date="20220722",
+    #     adjust="hfq",
+    # )
+    # print(stock_zh_a_hist_df)
 
-    stock_zh_a_hist_min_em_df = stock_zh_a_hist_min_em(symbol="833454", period="1")
+    stock_zh_a_hist_min_em_df = stock_zh_a_hist_min_em(symbol="300750", period="1")
     print(stock_zh_a_hist_min_em_df)
+    stock_zh_a_hist_min_em_df.to_csv('stock_zh_a_hist_min_em_df.csv', index=False)
 
-    stock_zh_a_hist_pre_min_em_df = stock_zh_a_hist_pre_min_em(symbol="833454")
-    print(stock_zh_a_hist_pre_min_em_df)
+    # stock_zh_a_hist_pre_min_em_df = stock_zh_a_hist_pre_min_em(symbol="300750")
+    # print(stock_zh_a_hist_pre_min_em_df)
 
-    stock_zh_a_hist_df = stock_zh_a_hist(
-        symbol="833454",
-        period="daily",
-        start_date="20170301",
-        end_date="20211115",
-        adjust="hfq",
-    )
-    print(stock_zh_a_hist_df)
+    # #获取某只stock历史数据
+    # stock_zh_a_hist_df = stock_zh_a_hist(
+    #     symbol="300750",
+    #     period="daily",
+    #     start_date="20130301",
+    #     end_date="20241115",
+    #     adjust="qfq",
+    # )
+    # print(stock_zh_a_hist_df)
 
