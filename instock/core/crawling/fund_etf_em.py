@@ -224,7 +224,7 @@ def fund_etf_hist_min_em(
             "fields1": "f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13",
             "fields2": "f51,f52,f53,f54,f55,f56,f57,f58",
             "ut": "7eea3edcaed734bea9cbfc24409ed989",
-            "ndays": "5",
+            "ndays": "2",
             "iscr": "0",
             "secid": f"{code_id_dict[symbol]}.{symbol}",
             "_": "1623766962675",
@@ -345,9 +345,10 @@ if __name__ == "__main__":
     # else:
     #     print("未获取到有效数据")
         
-    fund_etf_spot_em_df = fund_etf_spot_em()
-    print(fund_etf_spot_em_df)
-    fund_etf_spot_em_df.to_csv("fund_etf_spot_em_df.csv", index=False)
+    # 获取当日信息
+    # fund_etf_spot_em_df = fund_etf_spot_em()
+    # print(fund_etf_spot_em_df)
+    # fund_etf_spot_em_df.to_csv("fund_etf_spot_em_df.csv", index=False)
 
     # fund_etf_hist_hfq_em_df = fund_etf_hist_em(
     #     symbol="513500",
@@ -376,14 +377,14 @@ if __name__ == "__main__":
     # )
     # print(fund_etf_hist_em_df)
 
-# # 只有一周的数据
-#     fund_etf_hist_min_em_df = fund_etf_hist_min_em(
-#         symbol="513500",
-#         period="1",
-#         adjust="qfq",
-#         start_date="2024-08-12 09:29:00",
-#         end_date="2024-08-16 15:30:00",
-#     )
-#     print(fund_etf_hist_min_em_df)
-#     fund_etf_hist_min_em_df.to_csv("fund_etf_hist_min_em_df.csv", index=False)
+# 只有一周的数据
+    fund_etf_hist_min_em_df = fund_etf_hist_min_em(
+        symbol="513500",
+        period="1",
+        adjust="qfq",
+        start_date="2024-08-12 09:29:00",
+        end_date="2024-09-16 15:30:00",
+    )
+    print(fund_etf_hist_min_em_df)
+    fund_etf_hist_min_em_df.to_csv("fund_etf_hist_min_em_df.csv", index=False)
 

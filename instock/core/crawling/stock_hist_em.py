@@ -346,7 +346,7 @@ def stock_zh_a_hist_min_em(
             "fields1": "f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13",
             "fields2": "f51,f52,f53,f54,f55,f56,f57,f58",
             "ut": "7eea3edcaed734bea9cbfc24409ed989",
-            "ndays": "1",
+            "ndays": "2",
             "iscr": "0",
             "secid": f"{code_id_dict[symbol]}.{symbol}",
             "_": "1623766962675",
