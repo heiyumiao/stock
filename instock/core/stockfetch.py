@@ -4,9 +4,11 @@
 import logging
 import os.path
 import datetime
+import time
 import numpy as np
 import pandas as pd
 import talib as tl
+from retry import retry
 import instock.core.tablestructure as tbs
 import instock.lib.trade_time as trd
 import instock.core.crawling.trade_date_hist as tdh
@@ -25,10 +27,10 @@ __date__ = '2023/3/10 '
 
 # 设置基础目录，每次加载使用。
 cpath_current = os.path.dirname(os.path.dirname(__file__))
-stock_hist_cache_path = os.path.join(cpath_current, 'cache', 'hist')
+stock_hist_cache_path = os.path.join(cpath_current, 'cache', 'hist_stock')
 if not os.path.exists(stock_hist_cache_path):
     os.makedirs(stock_hist_cache_path)  # 创建多个文件夹结构。
-etf_hist_cache_path = os.path.join(cpath_current, 'cache', 'etf_hist')
+etf_hist_cache_path = os.path.join(cpath_current, 'cache', 'hist_etf')
 if not os.path.exists(etf_hist_cache_path):
     os.makedirs(etf_hist_cache_path)  # 创建多个文件夹结构。
 
@@ -244,24 +246,57 @@ def fetch_stock_blocktrade_data(date):
     return None
 
 
-# 读取股票历史数据
-def fetch_etf_hist(data_base, date_start=None, date_end=None, adjust='qfq'):
+# 读取etf历史数据   
+@retry(tries=3, delay=2) #自动重试机制会处理失败情况
+def fetch_etf_hist(data_base, date_start=None, date_end=None,is_cache=True, adjust='qfq'):
     date = data_base[0]
     code = data_base[1]
 
     if date_start is None:
         date_start, is_cache = trd.get_trade_hist_interval(date)  # 提高运行效率，只运行一次
     try:
-        if date_end is not None:
-            data = fee.fund_etf_hist_em(symbol=code, period="daily", start_date=date_start, end_date=date_end,
-                                        adjust=adjust)
-        else:
-            data = fee.fund_etf_hist_em(symbol=code, period="daily", start_date=date_start, adjust=adjust)
+        cache_dir = os.path.join(etf_hist_cache_path, "daily")
+        # 全部存在一个一个文件里面
+        try:
+            if not os.path.exists(cache_dir):
+                os.makedirs(cache_dir)
+        except Exception:
+            pass
+        cache_file = os.path.join(cache_dir, "%s%s.gzip.pickle" % (code, adjust))
+        # 如果缓存存在就直接返回缓存数据。压缩方式。
+        if os.path.isfile(cache_file):
+            cached_data = pd.read_pickle(cache_file, compression="gzip")
 
-        if data is None or len(data.index) == 0:
-            return None
-        data.columns = tuple(tbs.CN_STOCK_HIST_DATA['columns'])
-        data = data.sort_index()  # 将数据按照日期排序下。
+            # 获取今天的数据(目前只获取一天，添加到缓存中，todo：获取多天数据，合并进去，防止前面有意外没成功的)
+            today_str = datetime.datetime.now().strftime("%Y%m%d")
+            latest_stock = fee.fund_etf_hist_em(symbol=code, period="daily", start_date=today_str, adjust=adjust)
+
+            if latest_stock is not None and len(latest_stock.index) > 0:
+                latest_stock.columns = tuple(tbs.CN_STOCK_HIST_DATA['columns'])
+
+                # 合并缓存数据与最新数据
+                stock = pd.concat([cached_data, latest_stock], ignore_index=True)
+
+                if is_cache:
+                    stock.to_pickle(cache_file, compression="gzip")
+        else:
+            if date_end is not None:
+                stock = fee.fund_etf_hist_em(symbol=code, period="daily", start_date=date_start, end_date=date_end,
+                                            adjust=adjust)
+            else:
+                stock = fee.fund_etf_hist_em(symbol=code, period="daily", start_date=date_start, adjust=adjust)
+
+            if stock is None or len(stock.index) == 0:
+                return None
+            stock.columns = tuple(tbs.CN_STOCK_HIST_DATA['columns'])
+            stock = stock.sort_index()  # 将数据按照日期排序下。
+            try:
+                if is_cache:
+                    stock.to_pickle(cache_file, compression="gzip")
+            except Exception as e:
+                pass
+            # time.sleep(0.3)
+        data=stock
         if data is not None:
             data.loc[:, 'p_change'] = tl.ROC(data['close'].values, 1)
             data['p_change'].values[np.isnan(data['p_change'].values)] = 0.0
@@ -269,6 +304,7 @@ def fetch_etf_hist(data_base, date_start=None, date_end=None, adjust='qfq'):
         return data
     except Exception as e:
         logging.error(f"stockfetch.fetch_etf_hist处理异常：{e}")
+        raise
     return None
 
 
@@ -293,9 +329,10 @@ def fetch_stock_hist(data_base, date_start=None, is_cache=True):
 
 
 # 增加读取股票缓存方法。加快处理速度。多线程解决效率
+@retry(tries=3, delay=2) #自动重试机制会处理失败情况
 def stock_hist_cache(code, date_start, date_end=None, is_cache=True, adjust=''):
-    cache_dir = os.path.join(stock_hist_cache_path, date_start[0:6], date_start)
-    # 如果没有文件夹创建一个。月文件夹和日文件夹。方便删除。
+    cache_dir = os.path.join(stock_hist_cache_path, "daily")
+    # 全部存在一个一个文件里面
     try:
         if not os.path.exists(cache_dir):
             os.makedirs(cache_dir)
@@ -305,7 +342,22 @@ def stock_hist_cache(code, date_start, date_end=None, is_cache=True, adjust=''):
     # 如果缓存存在就直接返回缓存数据。压缩方式。
     try:
         if os.path.isfile(cache_file):
-            return pd.read_pickle(cache_file, compression="gzip")
+            cached_data = pd.read_pickle(cache_file, compression="gzip")
+
+            # 获取今天的数据(目前只获取一天，添加到缓存中，todo：获取多天数据，合并进去，防止前面有意外没成功的)
+            today_str = datetime.datetime.now().strftime("%Y%m%d")
+            latest_stock = she.stock_zh_a_hist(symbol=code, period="daily", start_date=today_str, adjust=adjust)
+
+            if latest_stock is not None and len(latest_stock.index) > 0:
+                latest_stock.columns = tuple(tbs.CN_STOCK_HIST_DATA['columns'])
+
+                # 合并缓存数据与最新数据
+                stock = pd.concat([cached_data, latest_stock], ignore_index=True)
+
+                if is_cache:
+                    stock.to_pickle(cache_file, compression="gzip")
+                
+                return stock
         else:
             if date_end is not None:
                 stock = she.stock_zh_a_hist(symbol=code, period="daily", start_date=date_start, end_date=date_end,
@@ -322,10 +374,11 @@ def stock_hist_cache(code, date_start, date_end=None, is_cache=True, adjust=''):
                     stock.to_pickle(cache_file, compression="gzip")
             except Exception as e:
                 pass
-            # time.sleep(1)
+            time.sleep(0.3)
             return stock
     except Exception as e:
         logging.error(f"stockfetch.stock_hist_cache处理异常：{code}代码{e}")
+        raise
     return None
 
 
@@ -336,6 +389,7 @@ def stock_hist_cache(code, date_start, date_end=None, is_cache=True, adjust=''):
 
 
 # 读取股票历史数据# min
+@retry(tries=3, delay=2) #自动重试机制会处理失败情况
 def fetch_stock_hist_min(data_base, date_start=None, is_cache=True):
     date = data_base[0]
     code = data_base[1]
@@ -346,14 +400,15 @@ def fetch_stock_hist_min(data_base, date_start=None, is_cache=True):
             data.loc[:, 'p_change'] = tl.ROC(data['close'].values, 1)
             data['p_change'].values[np.isnan(data['p_change'].values)] = 0.0
             data["volume"] = data['volume'].values.astype('double') * 100  # 成交量单位从手变成股。
+        time.sleep(0.3)
         return data
     except Exception as e:
         logging.error(f"stockfetch.fetch_stock_hist_min处理异常：{e}")
+        raise
     return None
 
 def stock_hist_min_cache(code, date_start, date_end=None, is_cache=True, adjust=''):
-    cache_dir = os.path.join(stock_hist_cache_path, date_start[0:6])
-    # 如果没有文件夹创建一个。月文件夹和日文件夹。方便删除。
+    cache_dir = os.path.join(stock_hist_cache_path, "min",date_start[0:6])
     try:
         if not os.path.exists(cache_dir):
             os.makedirs(cache_dir)
@@ -398,11 +453,12 @@ def stock_hist_min_cache(code, date_start, date_end=None, is_cache=True, adjust=
     
     except Exception as e:
         tb = traceback.format_exc()
-        logging.error(f"stockfetch.etf_hist_min_cache处理异常：{code}代码{e}\n{tb}")
-        return None
+        logging.error(f"stockfetch.etf_hist_min_cache处理异常：{code}代码{e}\n")
+        raise
     return None
 
 # 读取etf历史数据  min
+@retry(tries=3, delay=2) #自动重试机制会处理失败情况
 def fetch_etf_hist_min(data_base, date_start=None, adjust='qfq'):
     date = data_base[0]
     code = data_base[1]
@@ -421,12 +477,12 @@ def fetch_etf_hist_min(data_base, date_start=None, adjust='qfq'):
         return data
     except Exception as e:
         logging.error(f"stockfetch.fetch_etf_hist_min处理异常：{e}")
+        raise
     return None
 
 
 def etf_hist_min_cache(code, date_start, date_end=None, adjust=''):
-    cache_dir = os.path.join(etf_hist_cache_path, date_start[0:6])
-    # 如果没有文件夹创建一个。月文件夹和日文件夹。方便删除。
+    cache_dir = os.path.join(etf_hist_cache_path,"min", date_start[0:6])
     try:
         if not os.path.exists(cache_dir):
             os.makedirs(cache_dir)
@@ -471,6 +527,6 @@ def etf_hist_min_cache(code, date_start, date_end=None, adjust=''):
     
     except Exception as e:
         tb = traceback.format_exc()
-        logging.error(f"stockfetch.etf_hist_min_cache处理异常：{code}代码{e}\n{tb}")
-        return None
+        logging.error(f"stockfetch.etf_hist_min_cache处理异常：{code}代码{e}\n")
+        raise
     return None
