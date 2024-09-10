@@ -1,11 +1,7 @@
 #!/bin/sh
 
-DATE=`date +%Y-%m-%d`
 
-echo "###################"$DATETIME"###################" >> /data/logs/daily.${DATE}.log
-#增加获得今日全部数据和大盘数据
-
-/usr/local/bin/python3 /data/InStock/instock/job/execute_daily_job.py  >> /data/logs/workdayly.${DATE}.log
+/usr/local/bin/python3 /data/InStock/instock/job/execute_daily_job.py
 
 #mkdir -p /data/logs
 #DATE=`date +%Y-%m-%d:%H:%M:%S`

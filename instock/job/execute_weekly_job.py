@@ -28,7 +28,7 @@ import strategy_data_daily_job as sdj
 import backtest_data_daily_job as bdj
 import klinepattern_data_daily_job as kdj
 import selection_data_daily_job as sddj
-import data_weekly_job as ewj
+import data_daily_fetch_job as ewj
 
 __author__ = 'qyf '
 __date__ = '2024年8月23日'

@@ -16,7 +16,7 @@ sys.path.append(cpath)
 log_path = os.path.join(cpath_current, 'log')
 if not os.path.exists(log_path):
     os.makedirs(log_path)
-logging.basicConfig(format='%(asctime)s %(message)s', filename=os.path.join(log_path, 'stock_execute_job.log'))
+logging.basicConfig(format='%(asctime)s %(message)s', filename=os.path.join(log_path, 'stock_daily_job.log'))
 logging.getLogger().setLevel(logging.INFO)
 import init_job as bj
 import basic_data_daily_job as hdj
@@ -27,6 +27,7 @@ import strategy_data_daily_job as sdj
 import backtest_data_daily_job as bdj
 import klinepattern_data_daily_job as kdj
 import selection_data_daily_job as sddj
+import data_daily_fetch_job as ewj
 
 __author__ = 'myh '
 __date__ = '2023/3/10 '
@@ -42,6 +43,9 @@ def main():
     hdj.main()
     # 第2.2步创建综合股票数据表
     sddj.main()
+    # 第2.3步获取分钟以及日数据  新加入的
+    ewj.main()
+    logging.info("######## 完成数据获取, 使用时间: %s 秒 #######" % (time.time() - start))
     with concurrent.futures.ThreadPoolExecutor() as executor:
         # # 第3.1步创建股票其它基础数据表
         executor.submit(hdtj.main)
