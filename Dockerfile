@@ -2,13 +2,13 @@
 # https://hub.docker.com/_/python/tags?page=1&name=3.11.9-slim-bullseye
 FROM docker.io/python:3.11.9-slim-bullseye
 
-MAINTAINER myh
+MAINTAINER qyf
 #增加语言utf-8
 ENV LANG=zh_CN.UTF-8
 ENV LC_CTYPE=zh_CN.UTF-8
 ENV LC_ALL=C
 ENV PYTHONPATH=/data/InStock
-EXPOSE 9988
+EXPOSE 49988
 
 # 使用使用国内镜像地址加速。修改debian apt更新地址，pip地址，设置时区
 # https://opsx.alibaba.com/mirror
@@ -54,7 +54,11 @@ trusted-host = pypi.tuna.tsinghua.edu.cn" > /etc/pip.conf && \
 
 WORKDIR /data
 #InStock软件
-COPY . /data/InStock
+# 只复制需要的目录和文件
+COPY instock/ /data/InStock/instock/
+COPY supervisor/ /data/InStock/supervisor/
+
+RUN ls /data/InStock
 COPY cron/cron.hourly /etc/cron.hourly
 COPY cron/cron.workdayly /etc/cron.workdayly
 COPY cron/cron.monthly /etc/cron.monthly

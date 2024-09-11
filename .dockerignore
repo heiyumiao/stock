@@ -1,0 +1,20 @@
+.git
+.idea
+*.bat
+*.md
+requirements.txt
+*.csv
+
+# Ignore pycache directory
+__pycache__/
+
+# Ignore cache directory
+cache/
+
+# Ignore log directory
+log/
+
+# Other files to ignore (if needed)
+*.log
+*.tmp
+*.gzip.pickle
