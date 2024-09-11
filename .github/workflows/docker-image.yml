@@ -1,19 +1,30 @@
-姓名：名称：Docker 镜像 CI
+name: Docker Image CI
 
 on:
   push:
-    branches: [    分支：[“主”]"master" ]
-  # pull_request:
-  #   branches: [    分支：[“主”]"master" ]
-  workflow_dispatch:  # 手动触发
+    branches: ["master"]
+  workflow_dispatch:
 
 jobs:
-
   build:
-
-    runs-on:     运行：ubuntu-latest
+    runs-on: ubuntu-latest
+    
 
     steps:
-    - uses:     - 使用：actions/checkout@v3
-    - name:     - 名称：构建 Docker 镜像
-      run:       运行： docker build 。--file Dockerfile --tag my-image-name:$(日期 +%s): $(日期 +%s)
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+    - name: Build Docker image
+      run: |
+        TIMESTAMP=$(date +%Y%m%d)
+        docker build . --file Dockerfile --tag ${{ secrets.DOCKERHUB_USERNAME }}/instock:latest
+        docker tag ${{ secrets.DOCKERHUB_USERNAME }}/instock:latest ${{ secrets.DOCKERHUB_USERNAME }}/instock:$TIMESTAMP
+    
+    - name: Push Docker image to Docker Hub
+      run: |
+        TIMESTAMP=$(date +%Y%m%d)
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/instock:latest
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/instock:$TIMESTAMP
