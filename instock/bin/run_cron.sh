@@ -10,4 +10,4 @@ export LC_CTYPE=zh_CN.UTF-8
 printenv | grep -v "no_proxy" >> /etc/environment
 
 #启动cron服务。在前台
-/usr/sbin/cron -f
+/usr/sbin/cron -f >> /var/log/cron_output.log 2>&1

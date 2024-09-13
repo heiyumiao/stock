@@ -8,7 +8,7 @@ ENV LANG=zh_CN.UTF-8
 ENV LC_CTYPE=zh_CN.UTF-8
 ENV LC_ALL=C
 ENV PYTHONPATH=/data/InStock
-EXPOSE 49988
+EXPOSE 9988
 
 # 使用使用国内镜像地址加速。修改debian apt更新地址，pip地址，设置时区
 # https://opsx.alibaba.com/mirror
@@ -29,7 +29,8 @@ trusted-host = pypi.tuna.tsinghua.edu.cn" > /etc/pip.conf && \
     pip install mysqlclient && \
     pip install requests && \
     pip install arrow && \
-    pip install numpy && \
+    pip install numpy==1.26.4 && \
+    pip install retry && \
     pip install SQLAlchemy && \
     pip install PyMySQL && \
     pip install Logbook && \
@@ -59,6 +60,7 @@ COPY instock/ /data/InStock/instock/
 COPY supervisor/ /data/InStock/supervisor/
 
 RUN ls /data/InStock
+RUN ls /data/InStock/supervisor/
 COPY cron/cron.hourly /etc/cron.hourly
 COPY cron/cron.workdayly /etc/cron.workdayly
 COPY cron/cron.monthly /etc/cron.monthly

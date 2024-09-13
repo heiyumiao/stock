@@ -1,9 +1,19 @@
 #!/bin/sh
 
 
-/usr/local/bin/python3 /data/InStock/instock/job/execute_daily_job.py
+# 设置日志文件路径
+LOGFILE="/data/InStock/supervisor/log/workdayly.log"
 
-#mkdir -p /data/logs
-#DATE=`date +%Y-%m-%d:%H:%M:%S`
-#echo $DATE >> /data/logs/workdayly.log
+# 获取当前时间
+DATE=$(date '+%Y-%m-%d %H:%M:%S')
+
+# 记录当前时间到日志文件
+echo "[$DATE] Starting execute_daily_job.py..." | tee -a $LOGFILE
+
+# 执行 Python 脚本并将标准输出和错误输出都记录到日志文件
+/usr/local/bin/python3 /data/InStock/instock/job/execute_daily_job.py | tee -a $LOGFILE
+
+# 记录脚本完成时间
+DATE=$(date '+%Y-%m-%d %H:%M:%S')
+echo "[$DATE] Finished execute_daily_job.py." | tee -a $LOGFILE
 

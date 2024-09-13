@@ -1,6 +1,18 @@
 #!/bin/sh
 
-/usr/local/bin/python3 /data/InStock/instock/job/basic_data_daily_job.py
-#mkdir -p /data/logs
-#DATE=`date +%Y-%m-%d:%H:%M:%S`
-#echo $DATE >> /data/logs/hourly.log
+
+# 设置日志文件路径
+LOGFILE="/data/InStock/supervisor/log/basic_data_daily_job.log"
+
+# 获取当前时间
+DATE=$(date '+%Y-%m-%d %H:%M:%S')
+
+# 记录当前时间到日志文件和标准输出
+echo "[$DATE] Starting basic_data_daily_job.py..." | tee -a $LOGFILE
+
+# 执行 Python 脚本，并将输出追加到日志文件和标准输出
+/usr/local/bin/python3 /data/InStock/instock/job/basic_data_daily_job.py 2>&1 | tee -a $LOGFILE
+
+
+# cp /data/InStock/instock/run_hourly /etc/cron.hourly/run_hourly
+# cp /data/InStock/instock/run_workdayly /etc/cron.workdayly/run_workdayly
